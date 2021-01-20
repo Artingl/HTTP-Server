@@ -1,12 +1,11 @@
 from src.HttpServer import HttpServer
 
 
-def testRequest(info):
-    return f"Browser user agent is {info.request['user-agent']}"
+def getRequest(info):
+    return f"Hello, World! ({info.getServerIp()}:{info.getServerPort()})"
 
 
-server = HttpServer("0.0.0.0", 8364)
-server.runServer()
+server = HttpServer("0.0.0.0", 8364)  # Binding server on 0.0.0.0:8364
+server.runServer()  # Run the server
 
-server.folder = 'site'
-server.requests.add("/test", testRequest)
+server.requests.add("/test", getRequest)  # When we get request /test the function getRequest will be called

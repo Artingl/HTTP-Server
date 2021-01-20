@@ -35,7 +35,7 @@ class HttpServer:
                  f"Last-Modified: {date}\n" \
                  f"Content length: {(len(text))}\n" \
                  f"Connection: Closed\n" \
-                 f"Content-Type: text/html;\n\n" \
+                 f"Content-Type: text/html; charset=utf-8\n\n" \
                  f"{text}\n"
         usr.sendall(bytes(result, encoding="UTF-8"))
 
@@ -82,22 +82,26 @@ class HttpServer:
                 self.executeRequest(msg, usr)
 
             except Exception as e:
-                print(f"Unexpected error with one connection ({e})")
+                print(f"Unexpected error ({e})")
 
     def decodeHttpRequest(self, req):
-        res = {}
+        res = {"filePath": "index.html", "httpVersion": "HTTP/1.1", "info": {}}
 
         for i in req.split("\n"):
-            if i.startswith("GET"):
+            callType = ""
+            if i.startswith("GET "):
+                callType = "GET"
+            elif i.startswith("POST "):
+                callType = "POST"
+
+            if callType:
                 res["httpVersion"] = "HTTP" + i.split("HTTP")[1].strip()
-                res["filePath"] = i.split("HTTP")[0].split("GET")[1].strip()
+                res["filePath"] = i.split("HTTP")[0].split(callType)[1].strip()
 
                 if res["filePath"] == "/":
                     if self.indexFile:
                         res["filePath"] = self.indexFile
             else:
-                if "info" not in res:
-                    res["info"] = {}
                 if i.strip():
                     res["info"][i.split(":")[0].strip().lower()] = i.split(":")[1].strip()
 
