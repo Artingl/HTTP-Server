@@ -8,4 +8,5 @@ def testRequest(info):
 server = HttpServer("0.0.0.0", 8364)
 server.runServer()
 
+server.folder = 'site'
 server.requests.add("/test", testRequest)
