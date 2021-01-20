@@ -1,4 +1,11 @@
 from src.HttpServer import HttpServer
 
-server = HttpServer("localhost", 80)
+
+def testRequest(info):
+    return f"Browser user agent is {info.request['user-agent']}"
+
+
+server = HttpServer("0.0.0.0", 8364)
 server.runServer()
+
+server.requests.add("/test", testRequest)
